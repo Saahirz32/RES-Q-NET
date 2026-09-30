@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RES-Q-NET | Autonomous Robot Swarm Disaster Response Command</title>
+    
+    <!-- Leaflet.js CSS for High-Contrast Emergency Maps -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- Application Stylesheet -->
+    <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+    <!-- Emergency Ticker Banner -->
+    <div class="ticker-banner">
+        <div class="ticker-content">
+            <span class="pulse-dot"></span>
+            <strong>CRITICAL DISASTER RESPONSE:</strong> Operation Shield Swarm • Sector 4 & 5 NCR Seismic Incident • 100% Swarm Mesh Link Online
+        </div>
+        <div class="ticker-controls">
+            <button id="audioToggleBtn" class="btn-icon" title="Toggle Emergency Audio Alert" style="width: 28px; height: 28px; font-size: 0.8rem;">🔔</button>
+            <button id="themeToggleBtn" class="btn-icon" title="Toggle High-Contrast Mode" style="width: 28px; height: 28px; font-size: 0.8rem;">🌙</button>
+        </div>
+    </div>
+
+    <!-- Header / Navigation Bar -->
+    <header class="app-header">
+        <div class="brand-container">
+            <div class="brand-logo">Q</div>
+            <div class="brand-text">
+                <h1>RES-Q-NET</h1>
+                <div class="brand-tagline">Autonomous Swarm Platform • NDRF/SDRF Grid</div>
+            </div>
+        </div>
+
+        <nav>
+            <ul class="nav-menu" id="navMenu">
+                <li class="nav-item active"><button class="nav-btn" data-target="page-home">🏠 Home</button></li>
+                <li class="nav-item"><button class="nav-btn" data-target="page-map">🗺️ Live Disaster Map</button></li>
+                <li class="nav-item"><button class="nav-btn" data-target="page-fleet">🚁 Swarm Fleet</button></li>
+                <li class="nav-item"><button class="nav-btn" data-target="page-survivors">🆘 Survivors</button></li>
+                <li class="nav-item"><button class="nav-btn" data-target="page-hazards">⚠️ Hazards</button></li>
+                <li class="nav-item"><button class="nav-btn" data-target="page-how-it-works">⚙️ How It Works</button></li>
+                <li class="nav-item"><button class="nav-btn" data-target="page-awareness">📢 Public Info</button></li>
+                <li class="nav-item"><button class="nav-btn" data-target="page-reports">📄 Reports</button></li>
+                <li class="nav-item"><button class="nav-btn" data-target="page-quick-help">⚡ Quick Help</button></li>
+            </ul>
+        </nav>
+
+        <div class="header-actions">
+            <button onclick="window.ResqApp.switchPage('page-map')" class="btn-primary">
+                📡 Live Dashboard
+            </button>
+            <button onclick="window.ResqApp.switchPage('page-admin')" class="btn-secondary">
+                🔒 Admin Login
+            </button>
+            <button class="btn-icon hamburger-btn" id="hamburgerBtn">☰</button>
+        </div>
+    </header>
+
+    <!-- Main View Switcher Container -->
+    <main class="main-view-container">
+
+        <!-- =================================================================== -->
+        <!-- 1. HOME / LANDING PAGE                                              -->
+        <!-- =================================================================== -->
+        <section id="page-home" class="page-view active">
+            <div class="hero-section">
+                <div class="hero-grid">
+                    <div class="hero-content">
+                        <div class="hero-badge">
+                            <span class="pulse-dot green"></span> AI-Powered Autonomous SAR Drone Platform
+                        </div>
+                        <h1>Deployable AI Drone for <span>Search & Rescue</span></h1>
+                        <p>
+                            RES-Q-NET is a deployable, AI-powered autonomous drone platform built for disaster response. By rapidly scanning collapse zones, detecting trapped victims via computer vision & thermal sensors, and identifying environmental hazards in real time, it protects first responders and drastically reduces victim discovery time.
+                        </p>
+                        <div class="hero-cta">
+                            <button onclick="window.ResqApp.switchPage('page-map')" class="btn-primary" style="padding: 14px 28px; font-size: 1rem;">
+                                📡 Open Live Drone Dashboard
+                            </button>
+                            <button onclick="window.ResqApp.switchPage('page-how-it-works')" class="btn-secondary" style="padding: 14px 24px; font-size: 1rem;">
+                                ⚙️ How AI Drone Works
+                            </button>
+                        </div>
+
+                        <div class="hero-stats">
+                            <div class="stat-card">
+                                <div class="num" id="statActiveUnits">8</div>
+                                <div class="label">AI Drone Nodes</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="num" id="statTotalSurvivors">6</div>
+                                <div class="label">Victims Detected</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="num" id="statActiveHazards">4</div>
+                                <div class="label">Hazards Tracked</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="hero-graphic">
+                        <div class="radar-graphic-card">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                                <strong style="color: var(--color-blue); font-size: 0.9rem;">LIVE AI DRONE TELEMETRY FEED</strong>
+                                <span class="badge badge-green">AI VISION ACTIVE</span>
+                            </div>
+                            <div style="height: 240px; background: #070b14; border: 1px solid var(--bg-surface-border); border-radius: var(--radius-md); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                                <!-- Simulated Radar Rings -->
+                                <div style="position: absolute; width: 180px; height: 180px; border: 1px dashed rgba(56,189,248,0.3); border-radius: 50%;"></div>
+                                <div style="position: absolute; width: 100px; height: 100px; border: 1px solid rgba(56,189,248,0.4); border-radius: 50%;"></div>
+                                <div style="position: absolute; width: 10px; height: 10px; background: var(--color-blue); border-radius: 50%;"></div>
+
+                                <!-- Node Dots -->
+                                <div style="position: absolute; top: 40px; left: 70px; font-size: 11px;" title="SQ-01 AI Drone Scout">🚁 SQ-01 AI Drone</div>
+                                <div style="position: absolute; bottom: 50px; right: 80px; font-size: 11px; color: var(--color-red);" title="VICTIM-101">🆘 VICTIM-101 (96% AI)</div>
+                                <div style="position: absolute; top: 120px; right: 50px; font-size: 11px; color: var(--color-orange);" title="HAZARD-301">⚠️ GAS HAZARD</div>
+                            </div>
+                            <div style="margin-top: 16px; font-size: 0.8rem; color: var(--text-secondary); display: flex; justify-content: space-between;">
+                                <span>Epicenter: 28.6139° N, 77.2090° E</span>
+                                <span style="color: var(--color-green);">Discovery Speed: 70% Faster</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Core Features Grid -->
+            <div class="section-container">
+                <div class="section-header">
+                    <div class="section-title">
+                        <h2>Core System Objectives</h2>
+                        <p>Built to accelerate victim localization and safeguard rescue teams in high-risk disaster environments.</p>
+                    </div>
+                </div>
+
+                <div class="hero-features-grid">
+                    <div class="feature-card red">
+                        <div class="feature-icon">🤖</div>
+                        <h3>AI Victim Detection</h3>
+                        <p>Deployable computer vision models and FLIR thermal neural networks process aerial imagery to detect trapped survivors under rubble with up to 98% confidence.</p>
+                    </div>
+
+                    <div class="feature-card orange">
+                        <div class="feature-icon">⚠️</div>
+                        <h3>Autonomous Hazard Scouting</h3>
+                        <p>Onboard gas sniffer sensors and thermal cameras detect LPG leaks, fires, electrical wires, and structural breakdown risks before human teams step foot inside.</p>
+                    </div>
+
+                    <div class="feature-card green">
+                        <div class="feature-icon">🛡️</div>
+                        <h3>Responder Safety First</h3>
+                        <p>Eliminates dangerous blind entry for NDRF/SDRF personnel. Drones scout unstable buildings first, flagging safe corridors and high-risk collapse zones.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">⏱️</div>
+                        <h3>Reduced Discovery Time</h3>
+                        <p>Cuts critical time-to-first-detection by up to 70%, transmitting instant GPS coordinates and live vitals directly to command dashboards.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- =================================================================== -->
+        <!-- 2. LIVE DISASTER MAP (Most Important Page)                          -->
+        <!-- =================================================================== -->
+        <section id="page-map" class="page-view">
+            <div class="map-page-wrapper">
+                <!-- Sidebar Control Panel -->
+                <div class="map-sidebar">
+                    <div class="map-sidebar-header">
+                        <div>
+                            <h3 style="font-size: 1.1rem; font-weight: 800;">Detected Survivors</h3>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary);">Real-time Swarm Telemetry List</div>
+                        </div>
+                        <span class="badge badge-green">LIVE PULSE</span>
+                    </div>
+
+                    <div class="map-sidebar-content" id="mapSidebarSurvivorsList">
+                        <!-- Dynamic Survivor Cards Injected via App.js -->
+                    </div>
+                </div>
+
+                <!-- Interactive Map Container -->
+                <div class="map-container-box">
+                    <div class="map-controls-floating">
+                        <!-- Map Layer Switcher -->
+                        <div style="display: flex; gap: 4px; border-right: 1px solid var(--bg-surface-border); padding-right: 8px; margin-right: 4px;">
+                            <button onclick="window.ResqMapEngine.setTileProvider('dark')" class="filter-btn" title="Dark Vector Map">🌙 Dark</button>
+                            <button onclick="window.ResqMapEngine.setTileProvider('osm')" class="filter-btn" title="OpenStreetMap Standard">🗺️ OSM</button>
+                            <button onclick="window.ResqMapEngine.setTileProvider('satellite')" class="filter-btn" title="Satellite Imagery">🛰️ Satellite</button>
+                        </div>
+                        <!-- Filter Controls -->
+                        <button onclick="window.ResqMapEngine.setFilter('all')" class="filter-btn active">All Layers</button>
+                        <button onclick="window.ResqMapEngine.setFilter('survivors')" class="filter-btn">🆘 Survivors</button>
+                        <button onclick="window.ResqMapEngine.setFilter('hazards')" class="filter-btn">⚠️ Hazards</button>
+                        <button onclick="window.ResqMapEngine.setFilter('robots')" class="filter-btn">🚁 Swarm Units</button>
+                        <button onclick="window.ResqMapEngine.setFilter('routes')" class="filter-btn">🟢 Safe Routes</button>
+                    </div>
+                    <div id="leafletMap"></div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- =================================================================== -->
+        <!-- 3. ROBOT FLEET DASHBOARD                                            -->
+        <!-- =================================================================== -->
+        <section id="page-fleet" class="page-view">
+            <div class="section-container">
+                <div class="section-header">
+                    <div class="section-title">
+                        <h2>Swarm Fleet Telemetry</h2>
+                        <p>Real-time status monitor for active aerial scout drones, ground crawlers, and snake probes.</p>
+                    </div>
+                    <span class="badge badge-green">8 / 8 NODES ONLINE</span>
+                </div>
+
+                <div class="fleet-grid" id="fleetGridContainer">
+                    <!-- Dynamic Robot Cards Injected via App.js -->
+                </div>
+            </div>
+        </section>
+
+
+        <!-- =================================================================== -->
+        <!-- 4. SURVIVOR MANAGEMENT                                             -->
+        <!-- =================================================================== -->
+        <section id="page-survivors" class="page-view">
+            <div class="section-container">
+                <div class="section-header">
+                    <div class="section-title">
+                        <h2>Survivor Management & Triage</h2>
+                        <p>Track survivor status workflow: Detected ➔ Rescue In Progress ➔ Extricated / Rescued.</p>
+                    </div>
+                </div>
+
+                <div class="data-table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Survivor ID</th>
+                                <th>Triage Priority</th>
+                                <th>Rescue Status</th>
+                                <th>Location Detail</th>
+                                <th>Detection Method</th>
+                                <th>Vitals Ping</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="survivorsTableBody">
+                            <!-- Dynamic Table Rows Injected via App.js -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- =================================================================== -->
+        <!-- 5. HAZARD & ALERTS PANEL                                            -->
+        <!-- =================================================================== -->
+        <section id="page-hazards" class="page-view">
+            <div class="section-container">
+                <div class="section-header">
+                    <div class="section-title">
+                        <h2>Live Hazard & Risk Panel</h2>
+                        <p>Automated warning alerts triggered by swarm sensor gas arrays and structural deflection radars.</p>
+                    </div>
+                </div>
+
+                <div class="hero-features-grid" id="hazardsGridContainer">
+                    <!-- Dynamic Hazard Cards Injected via App.js -->
+                </div>
+            </div>
+        </section>
+
+
+        <!-- =================================================================== -->
+        <!-- 6. ADMIN LOGIN & ADMIN PANEL                                        -->
+        <!-- =================================================================== -->
+        <section id="page-admin" class="page-view">
+            <div class="section-container">
+                <div id="adminLoginSection" style="max-width: 440px; margin: 40px auto;">
+                    <div class="radar-graphic-card">
+                        <h2 style="margin-bottom: 8px; font-weight: 800; text-align: center;">Command Admin Login</h2>
+                        <p style="font-size: 0.85rem; color: var(--text-secondary); text-align: center; margin-bottom: 24px;">
+                            Secure role-based access for NDRF / SDRF Commanders & System Admins.
+                        </p>
+
+                        <form id="adminLoginForm">
+                            <div class="form-group">
+                                <label>Access Role</label>
+                                <select id="authRoleSelect" class="form-control">
+                                    <option value="Admin">Admin (Full Control & Marker Editing)</option>
+                                    <option value="Rescue Coordinator">Rescue Coordinator (Status Updates)</option>
+                                    <option value="Field Viewer">Field Viewer (Read-Only)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Passcode / Key</label>
+                                <input type="password" value="demo123" class="form-control" placeholder="Enter authentication passcode">
+                            </div>
+                            <button type="submit" class="btn-primary" style="width: 100%; justify-content: center; padding: 12px;">
+                                🔓 Authenticate & Access Panel
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <div id="adminDashboardSection" style="display: none;">
+                    <div class="section-header">
+                        <div class="section-title">
+                            <h2>Admin System Command Center</h2>
+                            <p>Manual marker placement, emergency broadcast control, and real-time swarm telemetry log stream.</p>
+                        </div>
+                        <span class="badge badge-orange" id="adminRoleBadge">Role: Admin</span>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
+                        <div class="radar-graphic-card">
+                            <h3 style="margin-bottom: 12px; font-weight: 800;">Real-Time Swarm Operational Log</h3>
+                            <div id="systemLogsFeed" style="max-height: 300px; overflow-y: auto; background: #070b14; padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--bg-surface-border);">
+                                <!-- Log lines injected via App.js -->
+                            </div>
+                        </div>
+
+                        <div class="radar-graphic-card">
+                            <h3 style="margin-bottom: 12px; font-weight: 800;">Emergency Actions</h3>
+                            <button onclick="window.ResqApp.playAlertSound()" class="btn-danger" style="width: 100%; justify-content: center; margin-bottom: 12px;">
+                                🚨 Broadcast Sound Siren
+                            </button>
+                            <button onclick="window.ResqReportsEngine.exportSwarmTelemetryJSON()" class="btn-secondary" style="width: 100%; justify-content: center;">
+                                📥 Export Full Telemetry JSON
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- =================================================================== -->
+        <!-- 7. HOW IT WORKS / ABOUT                                            -->
+        <!-- =================================================================== -->
+        <section id="page-how-it-works" class="page-view">
+            <div class="section-container">
+                <div class="section-header">
+                    <div class="section-title">
+                        <h2>How RES-Q-NET AI Drones Operate</h2>
+                        <p>An autonomous 6-step search-and-rescue pipeline designed to protect responders and accelerate victim discovery.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-grid">
+                    <div class="step-card">
+                        <div class="step-num">1</div>
+                        <h3 style="margin-bottom: 8px;">Rapid AI Drone Launch</h3>
+                        <p style="font-size: 0.9rem; color: var(--text-secondary);">Autonomous aerial drones and micro-probes are deployed at disaster epicenter perimeters instantly.</p>
+                    </div>
+
+                    <div class="step-card">
+                        <div class="step-num">2</div>
+                        <h3 style="margin-bottom: 8px;">AI Vision & Thermal Scan</h3>
+                        <p style="font-size: 0.9rem; color: var(--text-secondary);">Onboard neural networks process optical FLIR thermal and Doppler radar to detect trapped victims under debris.</p>
+                    </div>
+
+                    <div class="step-card">
+                        <div class="step-num">3</div>
+                        <h3 style="margin-bottom: 8px;">Hazard Detection & Sniffing</h3>
+                        <p style="font-size: 0.9rem; color: var(--text-secondary);">Gas sniffer arrays & LIDAR sensors map gas leaks, active fires, and structural collapse risks in real time.</p>
+                    </div>
+
+                    <div class="step-card">
+                        <div class="step-num">4</div>
+                        <h3 style="margin-bottom: 8px;">Unified Live Map Synthesis</h3>
+                        <p style="font-size: 0.9rem; color: var(--text-secondary);">Telemetry feeds directly to the central dashboard, updating victim GPS pins and vitals in real time.</p>
+                    </div>
+
+                    <div class="step-card">
+                        <div class="step-num">5</div>
+                        <h3 style="margin-bottom: 8px;">Responder Safety Routing</h3>
+                        <p style="font-size: 0.9rem; color: var(--text-secondary);">AI algorithms compute safest evacuation corridors, preventing first responders from entering hazard zones blindly.</p>
+                    </div>
+
+                    <div class="step-card">
+                        <div class="step-num">6</div>
+                        <h3 style="margin-bottom: 8px;">Rapid Guided Rescue</h3>
+                        <p style="font-size: 0.9rem; color: var(--text-secondary);">NDRF/SDRF ground teams navigate directly to verified victim locations, reducing discovery time by up to 70%.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- =================================================================== -->
+        <!-- 8. PUBLIC AWARENESS & EDUCATION                                    -->
+        <!-- =================================================================== -->
+        <section id="page-awareness" class="page-view">
+            <div class="section-container">
+                <div class="section-header">
+                    <div class="section-title">
+                        <h2>Public Disaster Preparedness & Safety</h2>
+                        <p>Citizen earthquake survival instructions and community response guidelines.</p>
+                    </div>
+                </div>
+
+                <div class="hero-features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🚪</div>
+                        <h3>Drop, Cover & Hold On</h3>
+                        <p>During shaking, drop to your hands and knees. Cover your head and neck under a sturdy table or desk. Hold on until shaking stops.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">🎒</div>
+                        <h3>Emergency Go-Bag Kit</h3>
+                        <p>Keep 72 hours of drinking water, non-perishable food, flashlight, battery radio, first aid supplies, and emergency whistle accessible.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">🔊</div>
+                        <h3>If Trapped Under Rubble</h3>
+                        <p>Cover your mouth with cloth to avoid dust. Tap loudly on pipes or wall beams in rhythmic sets of 3 so RES-Q-NET acoustic sensors locate you.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- =================================================================== -->
+        <!-- 9. REPORTS & DOWNLOADS                                             -->
+        <!-- =================================================================== -->
+        <section id="page-reports" class="page-view">
+            <div class="section-container">
+                <div class="section-header">
+                    <div class="section-title">
+                        <h2>Operational Reports & Data Exports</h2>
+                        <p>Generate printable incident summaries and download raw GIS/telemetry datasets.</p>
+                    </div>
+                </div>
+
+                <div class="hero-features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🖨️</div>
+                        <h3>Print Incident Summary Report</h3>
+                        <p>Generates an official NDRF formatted operational report including survivor triage lists and hazard SOPs.</p>
+                        <button onclick="window.ResqReportsEngine.printIncidentReport()" class="btn-primary" style="margin-top: 16px;">
+                            🖨️ Generate & Print PDF
+                        </button>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">📊</div>
+                        <h3>Export Survivors Triage (CSV)</h3>
+                        <p>Download structured CSV spreadsheet of all localized survivors with confidence scores and vital pings.</p>
+                        <button onclick="window.ResqReportsEngine.exportSurvivorsCSV()" class="btn-secondary" style="margin-top: 16px;">
+                            📥 Download CSV
+                        </button>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">🌐</div>
+                        <h3>Swarm Telemetry (JSON)</h3>
+                        <p>Export complete JSON dataset containing robot battery history, signal RSSI, and hazard boundaries.</p>
+                        <button onclick="window.ResqReportsEngine.exportSwarmTelemetryJSON()" class="btn-secondary" style="margin-top: 16px;">
+                            📥 Download JSON
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- =================================================================== -->
+        <!-- 10. HELP & REDIRECT RESOURCES ("Quick Help")                        -->
+        <!-- =================================================================== -->
+        <section id="page-quick-help" class="page-view">
+            <div class="section-container">
+                <div class="section-header">
+                    <div class="section-title">
+                        <h2>Quick Help & Official External Resources</h2>
+                        <p>Direct links to government portals, emergency helplines, trauma care manuals, and responder mental health support.</p>
+                    </div>
+                </div>
+
+                <div class="help-grid" id="quickHelpGridContainer">
+                    <!-- Dynamic Help Cards Injected via App.js -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Survivor Action Modal -->
+    <div class="modal-backdrop" id="survivorModal">
+        <div class="modal-card">
+            <h3 style="margin-bottom: 6px; font-weight: 800;">Update Survivor Rescue Status</h3>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 20px;">
+                Survivor Target: <strong id="modalSurvId" style="color: var(--color-blue);">SURV-101</strong>
+            </p>
+
+            <div class="form-group">
+                <label>Updated Operational Status</label>
+                <select id="modalSurvStatusSelect" class="form-control">
+                    <option value="Detected">🆘 Detected (Awaiting Rescue Unit)</option>
+                    <option value="Rescue In Progress">⏳ Rescue In Progress (NDRF On-Site)</option>
+                    <option value="Rescued">✅ Rescued (Extricated & Transferred)</option>
+                </select>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
+                <button onclick="window.ResqApp.closeSurvivorActionModal()" class="btn-secondary">Cancel</button>
+                <button onclick="window.ResqApp.saveSurvivorStatusUpdate()" class="btn-primary">Save Status Update</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact & Footer Section -->
+    <footer style="background-color: var(--bg-surface); border-top: 1px solid var(--bg-surface-border); padding: 32px 24px; margin-top: auto;">
+        <div style="max-width: 1320px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+            <div>
+                <strong style="color: var(--text-primary);">RES-Q-NET Swarm Dashboard</strong>
+                <div style="font-size: 0.8rem; color: var(--text-muted);">Autonomous Disaster Response System • Built for NDRF & SDRF Emergency Units</div>
+            </div>
+            <div style="font-size: 0.8rem; color: var(--text-secondary);">
+                Emergency Control Room Hotline: <strong>112 / +91-11-24363260</strong>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JS Application Scripts -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/map.js"></script>
+    <script src="js/swarm-simulator.js"></script>
+    <script src="js/reports.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
